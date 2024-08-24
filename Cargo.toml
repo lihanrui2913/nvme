@@ -1,0 +1,11 @@
+[package]
+name = "nvme"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/lihanrui2913/nvme"
+description = "A simple NVMe driver"
+license = "MIT/Apache-2.0"
+keywords = ["nvme", "pcie", "no_std"]
+
+[dependencies]
+log = "0.4.22"
