@@ -1,7 +1,7 @@
 use alloc::boxed::Box;
 
 use super::cmd::NvmeCommand;
-use super::memory::{Dma, Allocator};
+use super::memory::{Allocator, Dma};
 use core::error::Error;
 use core::hint::spin_loop;
 
@@ -39,7 +39,11 @@ pub struct NvmeSubQueue {
 }
 
 impl NvmeSubQueue {
-    pub fn new<A: Allocator>(len: usize, doorbell: usize, allocator: &A) -> Result<Self, Box<dyn Error>> {
+    pub fn new<A: Allocator>(
+        len: usize,
+        doorbell: usize,
+        allocator: &A,
+    ) -> Result<Self, Box<dyn Error>> {
         Ok(Self {
             commands: Dma::allocate(allocator, 4096),
             head: 0,
@@ -90,7 +94,11 @@ pub struct NvmeCompQueue {
 
 // TODO: error handling
 impl NvmeCompQueue {
-    pub fn new<A: Allocator>(len: usize, doorbell: usize, allocator: &A) -> Result<Self, Box<dyn Error>> {
+    pub fn new<A: Allocator>(
+        len: usize,
+        doorbell: usize,
+        allocator: &A,
+    ) -> Result<Self, Box<dyn Error>> {
         Ok(Self {
             commands: Dma::allocate(allocator, 4096),
             head: 0,
