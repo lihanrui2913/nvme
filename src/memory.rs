@@ -1,9 +1,5 @@
-use alloc::boxed::Box;
-use core::{
-    error::Error,
-    ops::{Deref, DerefMut, Index, IndexMut, Range, RangeFull, RangeTo},
-    slice,
-};
+use core::ops::{Deref, DerefMut, Index, IndexMut, Range, RangeFull, RangeTo};
+use core::slice;
 
 const PAGE_BITS: u32 = 12;
 pub const PAGE_SIZE: usize = 1 << PAGE_BITS;
@@ -143,24 +139,24 @@ impl IndexMut<RangeFull> for Dma<u8> {
     }
 }
 
-extern "Rust" {
-    fn alloc_for_dma(size: usize) -> (usize, usize);
+pub trait Allocator {
+    unsafe fn allocate(&self, size: usize) -> (usize, usize);
 }
 
 impl<T> Dma<T> {
-    pub fn allocate(size: usize) -> Result<Dma<T>, Box<dyn Error>> {
+    pub fn allocate<A: Allocator>(allocator: &A, size: usize) -> Dma<T> {
         let size = if size % 4096 != 0 {
             ((size >> PAGE_BITS) + 1) << PAGE_BITS
         } else {
             size
         };
 
-        let (paddr, vaddr) = unsafe { alloc_for_dma(size / PAGE_SIZE) };
+        let (paddr, vaddr) = unsafe { allocator.allocate(size / PAGE_SIZE) };
 
-        Ok(Dma {
+        Dma {
             virt: vaddr as *mut T,
             phys: paddr,
             size,
-        })
+        }
     }
 }
