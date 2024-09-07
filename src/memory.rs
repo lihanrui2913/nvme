@@ -145,13 +145,13 @@ pub trait Allocator {
 
 impl<T> Dma<T> {
     pub fn allocate<A: Allocator>(allocator: &A, size: usize) -> Dma<T> {
-        let size = if size % 4096 != 0 {
+        let size = if size % PAGE_SIZE != 0 {
             ((size >> PAGE_BITS) + 1) << PAGE_BITS
         } else {
             size
         };
 
-        let (paddr, vaddr) = unsafe { allocator.allocate(size / PAGE_SIZE) };
+        let (paddr, vaddr) = unsafe { allocator.allocate(size) };
 
         Dma {
             virt: vaddr as *mut T,
