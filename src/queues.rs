@@ -25,8 +25,7 @@ pub struct NvmeCompletion {
     pub status: u16,
 }
 
-/// maximum amount of submission entries on a 2MiB huge page
-pub const QUEUE_LENGTH: usize = 1024;
+pub const QUEUE_LENGTH: usize = 64;
 
 /// Submission queue
 pub struct NvmeSubQueue {
